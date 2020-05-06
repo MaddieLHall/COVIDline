@@ -53,7 +53,7 @@
 
 			yScale = d3.scaleLinear()
 							.domain([0, d3.max(dataset, function(d) { return d.Death; })])
-                            .range([h - padding, 0]);
+                            .range([h - padding, 15]); //15 is so top of axis is not cut off
                             
 
         //Define axes
