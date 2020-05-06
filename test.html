@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Loading data from a CSV file</title>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <style type="text/css">
+
+			.line {
+				fill: none;
+				stroke: black;
+				stroke-width: 0.5;
+			}
+
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+           //Width and height of container
+			var w = 800;
+			var h = 300;
+			var padding = 40;
+			
+           let parseDate = d3.timeParse("%m/%d/%Y");
+
+            let rowConverter = function(d) {
+                return{
+                    Cases: parseInt(d.Cases),
+                    Counties: parseInt(d.Counties),
+                    Date: parseDate(d.Date),
+                    Death: parseInt(d.Deaths),
+                    Hosp: parseInt(d.Hosp),
+                    Index: parseInt(d.Index),
+                    Tested: parseInt(d.Tested)
+
+                };
+            };
+            //loading data
+            let dataset, xScale, yScale, xAxis, yAxis, line;  //Empty, for now
+
+			d3.csv("COVIDco.csv", rowConverter, function(data) {
+                dataset = data
+				console.table(dataset);
+            
+
+
+            
+                //setting scales
+            xScale = d3.scaleTime()
+							   .domain([
+									d3.min(dataset, function(d) { return d.Date; }),
+									d3.max(dataset, function(d) { return d.Date; })
+								])
+							   .range([padding, w]);
+
+			yScale = d3.scaleLinear()
+							.domain([0, d3.max(dataset, function(d) { return d.Death; })])
+                            .range([h - padding, 0]);
+                            
+
+        //Define axes
+				xAxis = d3.axisBottom()
+						   .scale(xScale)
+						   .ticks(10)
+                           .tickFormat(d3.timeFormat("%m-%d-%Y"));
+				//Define Y axis
+				yAxis = d3.axisLeft()
+						   .scale(yScale)
+						   .ticks(10);
+
+				//Define line generator
+				line = d3.line()
+							.x(function(d) { return xScale(d.date); })
+							.y(function(d) { return yScale(d.Death); });
+				
+				//Create SVG element
+				var svg = d3.select("body")
+							.append("svg")
+							.attr("width", w)
+							.attr("height", h);
+
+				//Create line
+				svg.append("path")
+					.datum(dataset)
+					.attr("class", "line")
+					.attr("d", line);
+
+				//Create axes
+				svg.append("g")
+					.attr("class", "axis")
+					.attr("transform", "translate(0," + (h - padding) + ")")
+					.call(xAxis);
+
+				svg.append("g")
+					.attr("class", "axis")
+					.attr("transform", "translate(" + padding + ",0)")
+					.call(yAxis);
+
+            }); // close graph/dataset
+		</script>
+	</body>
+</html>
