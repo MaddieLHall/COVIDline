@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>D3: Loading data from a CSV file</title>
+		<title>Colorado COVID Deaths</title>
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <style type="text/css">
 
@@ -35,15 +35,13 @@
 
                 };
             };
-            //loading data
             let dataset, xScale, yScale, xAxis, yAxis, line;  //Empty, for now
 
-			d3.csv("COVIDco.csv", rowConverter, function(data) {
+		            //loading data
+        	d3.csv("COVIDco.csv", rowConverter, function(data) {
                 dataset = data
 				console.table(dataset);
-            
-
-
+        
             
                 //setting scales
             xScale = d3.scaleTime()
