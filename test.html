@@ -16,9 +16,9 @@
   <body>
     <script type="text/javascript">
       //Width and height of container
-      var w = 800;
-      var h = 300;
-      var padding = 40;
+      let w = 800;
+      let h = 300;
+      let padding = 40;
 
       let parseDate = d3.timeParse("%m/%d/%Y");
 
@@ -82,7 +82,7 @@
           });
 
         //Create SVG element
-        var svg = d3
+        let svg = d3
           .select("body")
           .append("svg")
           .attr("width", w)
