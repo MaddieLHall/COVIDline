@@ -89,10 +89,23 @@
           .attr("height", h);
 
         //Create line
-        svg
-          .append("path")
-          .attr("class", "line")
-          .attr("d", line(dataset));
+        // svg
+        //   .append("path")
+        //   .attr("class", "line")
+        //   .attr("d", line(dataset));
+
+      //   svg.append("path")
+      // .data([dataset])
+      // .attr("class", "line")
+      // .attr("d", line);
+
+      svg
+        .selectAll("path")
+        .data([dataset])
+        .enter()
+        .append("path")
+        .attr("class","line")
+        .attr("d", line);
 
         //Create axes
         svg
