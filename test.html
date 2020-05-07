@@ -38,7 +38,7 @@
       //loading data
       d3.csv("COVIDco.csv", rowConverter, function (data) {
         dataset = data;
-        console.table(dataset);
+        // console.table(dataset);
 
         //setting scales
         xScale = d3
@@ -75,7 +75,7 @@
         //Define line generator
         line = d3.line()
           .x(function (d) {
-            return xScale(d.date);
+            return xScale(d.Date);
           })
           .y(function (d) {
             return yScale(d.Death);
