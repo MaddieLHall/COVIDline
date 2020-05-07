@@ -72,8 +72,7 @@
         yAxis = d3.axisLeft().scale(yScale).ticks(10);
 
         //Define line generator
-        line = d3
-          .line()
+        line = d3.line()
           .x(function (d) {
             return xScale(d.date);
           })
@@ -89,7 +88,7 @@
           .attr("height", h);
 
         //Create line
-        svg.append("path").datum(dataset).attr("class", "line").attr("d", line);
+        svg.enter().append("path").datum(dataset).attr("class", "line").attr("d", line);
 
         //Create axes
         svg
