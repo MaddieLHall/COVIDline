@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -17,6 +18,7 @@
     <button type="button" id="test">Test</button>
     <button type="button" id="test">Test</button>
     <button type="button" id="test">Test</button>
+
 
     <script type="text/javascript">
       //Width and height of container
@@ -77,8 +79,7 @@
         yAxis = d3.axisLeft().scale(yScale).ticks(10);
 
         //Define line generator
-        line = d3
-          .line()
+        line = d3.line()
           .x(function (d) {
             return xScale(d.Date);
           })
@@ -94,22 +95,23 @@
           .attr("height", h);
 
         //Create line
-        //method 1
-        svg.append("path").attr("class", "line").attr("d", line(dataset));
-        //method 2
-        //   svg.append("path")
-        // .data([dataset])
-        // .attr("class", "line")
-        // .attr("d", line);
+        svg
+          .append("path")
+          .attr("class", "line")
+          .attr("d", line(dataset));
 
-        //method 3
-        // svg
-        //   .selectAll("path")
-        //   .data([dataset])
-        //   .enter()
-        //   .append("path")
-        //   .attr("class","line")
-        //   .attr("d", line);
+      //   svg.append("path")
+      // .data([dataset])
+      // .attr("class", "line")
+      // .attr("d", line);
+
+      // svg
+      //   .selectAll("path")
+      //   .data([dataset])
+      //   .enter()
+      //   .append("path")
+      //   .attr("class","line")
+      //   .attr("d", line);
 
         //Create axes
         svg
@@ -123,55 +125,70 @@
           .attr("class", "axis")
           .attr("transform", "translate(" + padding + ",0)")
           .call(yAxis);
+
+      
+          
+
+
+
       }); // close /dataset
 
-      //on button click (this might all suck and not work)
-      d3.select("button#cases").on("click", function () {
+//on button click
+d3.select("button#cases")
+			.on("click", function () {
+
         // reload dataset
         d3.csv("COVIDco.csv", rowConverter, function (data) {
-          dataset = data;
-          // console.table(dataset);
+        dataset = data;
+        // console.table(dataset);
 
           // * redefine scales
-          xScale = d3
-            .scaleTime()
-            .domain([
-              d3.min(dataset, function (d) {
-                return d.Date;
-              }),
-              d3.max(dataset, function (d) {
-                return d.Cases;
-              }),
-            ])
-            .range([padding, w]);
+        xScale = d3
+          .scaleTime()
+          .domain([
+            d3.min(dataset, function (d) {
+              return d.Date;
+            }),
+            d3.max(dataset, function (d) {
+              return d.Cases;
+            }),
+          ])
+          .range([padding, w]);
 
-          yScale = d3
-            .scaleLinear()
-            .domain([
-              0,
-              d3.max(dataset, function (d) {
-                return d.Cases;
-              }),
-            ])
-            .range([h - padding, 15]); //15 is so top of axis is not cut off
+        yScale = d3
+          .scaleLinear()
+          .domain([
+            0,
+            d3.max(dataset, function (d) {
+              return d.Cases;
+            }),
+          ])
+          .range([h - padding, 15]); //15 is so top of axis is not cut off
 
-          //redefine line
-          line = d3
-            .line()
-            .x(function (d) {
-              return xScale(d.Date);
-            })
-            .y(function (d) {
-              return yScale(d.Cases);
-            });
 
+            //redefine line
+        line = d3.line()
+          .x(function (d) {
+            return xScale(d.Date);
+          })
+          .y(function (d) {
+            return yScale(d.Cases);
+          });
+          
+          
           let svg = d3
-            .select("body")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
-        });
+          .select("body")
+          .append("svg")
+          .attr("width", w)
+          .attr("height", h);
+
+
+      
       });
+
+
+      });
+
     </script>
   </body>
 </html>
