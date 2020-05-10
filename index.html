@@ -125,7 +125,7 @@ document.getElementById('chgtext').innerHTML = text;
         .attr('class', 'yAxis');
 
     }).then(() => {
-      changeVariable("Deaths")
+      IntroVariable("Deaths")
     })
 
 
@@ -148,6 +148,25 @@ document.getElementById('chgtext').innerHTML = text;
       svg.select('.yAxis')
         .transition()
         .duration(1000)
+        .call(d3.axisLeft(y))
+    }
+
+    function IntroVariable(newValue) {
+      let yMax = d3.max(allData, function (d) { return d[newValue]; });
+
+      y.domain([0, yMax]);
+
+      value = newValue
+      
+      svg.selectAll('.covidLine')
+        .data([allData])
+        .join('path')
+          .transition()
+          .duration(1000)
+          .attr("class", "covidLine line")
+          .attr("d", valueline)
+      
+      svg.select('.yAxis')
         .call(d3.axisLeft(y))
     }
     
