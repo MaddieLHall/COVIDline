@@ -40,16 +40,15 @@
   
   <script>
 
+//changes text in the H1
 function changeText(text) {
 
 document.getElementById('chgtext').innerHTML = text;
-}
+};
     var casesButton = document.querySelector('#cases'); 
         casesButton.addEventListener('click', function() { 
           let changed = "Cases"
           changeVariable(changed)
-          // changeTitleText(changed) selecting title .text = changed
-          // changeText
         });
     
     var casesButton = document.querySelector('#deaths'); 
@@ -79,6 +78,8 @@ document.getElementById('chgtext').innerHTML = text;
     var x = d3.scaleTime().range([0, width]);
     var y = d3.scaleLinear().range([height, 0]);
 
+
+    // opens at deaths
     let value = "Deaths"
     // define the line
     var valueline = d3.line()
@@ -109,7 +110,8 @@ document.getElementById('chgtext').innerHTML = text;
       });
       
       allData = data
-      // Scale the range of the data
+
+      // Scale the range of the data. X is unchanged on every graph so it is here and not in new function
       x.domain(d3.extent(data, function (d) { return d.Date; }));
 
       // Add the x Axis
@@ -126,8 +128,11 @@ document.getElementById('chgtext').innerHTML = text;
       changeVariable("Deaths")
     })
 
+
+    //function to change the data value
     function changeVariable(newValue) {
-      let yMax = d3.max(allData, function (d) { return d[newValue]; })
+      let yMax = d3.max(allData, function (d) { return d[newValue]; });
+
       y.domain([0, yMax]);
 
       value = newValue
