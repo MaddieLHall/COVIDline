@@ -1,94 +1,112 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style> /* set the CSS */
+<style>
+  /* set the CSS */
 
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 2px;
-}
-
+  .line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+  }
 </style>
+
 <body>
+  <button id="cases">
+    Cases
+  </button>
+  <button id="deaths">
+    Deaths
+  </button>
+  <!-- load the d3.js library -->
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script>
+    var casesButton = document.querySelector('#cases'); 
+        casesButton.addEventListener('click', function() { 
+          let changed = "Cases"
+          changeVariable(changed)
+          // changeTitleText(changed) selecting title .text = changed
+          // changeText
+        });
+    
+    var casesButton = document.querySelector('#deaths'); 
+      casesButton.addEventListener('click', function() { 
+        changeVariable("Deaths")
+      }); 
 
-<!-- load the d3.js library -->    	
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script>
+    // set the dimensions and margins of the graph
+    var margin = { top: 20, right: 20, bottom: 50, left: 70 },
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
-// set the dimensions and margins of the graph
-var margin = {top: 20, right: 20, bottom: 50, left: 70},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    // parse the date / time
+    let parseTime = d3.timeParse("%m/%d/%Y");
 
-// parse the date / time
-let parseTime = d3.timeParse("%m/%d/%Y");
+    // set the ranges
+    var x = d3.scaleTime().range([0, width]);
+    var y = d3.scaleLinear().range([height, 0]);
 
-// set the ranges
-var x = d3.scaleTime().range([0, width]);
-var y = d3.scaleLinear().range([height, 0]);
+    let value = "Deaths"
+    // define the line
+    var valueline = d3.line()
+      .x(function (d) { return x(d.Date); })
+      .y(function (d) { return y(d[value]); });
 
+    // append the svg obgect to the body of the page
+    // appends a 'group' element to 'svg'
+    // moves the 'group' element to the top left margin
+    var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
 
-// define the line
-var valueline = d3.line()
-    .x(function(d) { return x(d.Date); })
-    .y(function(d) { return y(d.Deaths); });
+    // Get the data
+    let allData = []
+    d3.csv("COVIDco.csv").then(function (data) {
 
-// append the svg obgect to the body of the page
-// appends a 'group' element to 'svg'
-// moves the 'group' element to the top left margin
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
-
-// Get the data
-d3.csv("COVIDco.csv").then(function(data) {
-
-  // // format the data
-  // data.forEach(function(d) {
-  //     d.Date = parseTime(d.Date);
-  //     d.Cases = +d.Cases;
-  //     d.Death = +d.Deaths;
-  // });
-  let rowConverter = function (d) {
-        return {
-          Cases: parseInt(d.Cases),
-          Counties: parseInt(d.Counties),
-          Date: parseTime(d.Date),
-          Deaths: parseInt(d.Deaths),
-          Hosp: parseInt(d.Hosp),
-          Index: parseInt(d.Index),
-          Tested: parseInt(d.Tested),
-        };
-      };
-
-      console.table(data)
-
+      // // format the data
+      data.forEach(function(d) {
+        d.Date = parseTime(d.Date);
+        d.Deaths = parseInt(d.Deaths);
+        d.Cases = parseInt(d.Cases);
+      });
       
-  // Scale the range of the data
-  x.domain(d3.extent(data, function(d) { return d.Date; }));
+      allData = data
+      // Scale the range of the data
+      x.domain(d3.extent(data, function (d) { return d.Date; }));
 
+      // Add the x Axis
+      svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
 
-  y.domain([0, d3.max(data, function(d) { return d.Deaths; })]);
+      // Add the y Axis
+      svg.append("g")
+        .call(d3.axisLeft(y))
+        .attr('class', 'yAxis');
 
-  // Add the valueline path.
-  svg.append("path")
-      .data([data])
-      .attr("class", "line")
-      .attr("d", valueline);
+    }).then(() => {
+      changeVariable("Deaths")
+    })
 
-  // Add the x Axis
-  svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+    function changeVariable(newValue) {
+      let yMax = d3.max(allData, function (d) { return d[newValue]; })
+      y.domain([0, yMax]);
 
-  // Add the y Axis
-  svg.append("g")
-      .call(d3.axisLeft(y));
-
-});
-
-</script>
+      value = newValue
+      
+      svg.selectAll('.covidLine')
+        .data([allData])
+        .join('path')
+          .transition()
+          .duration(1000)
+          .attr("class", "covidLine line")
+          .attr("d", valueline)
+      
+      svg.select('.yAxis')
+        .call(d3.axisLeft(y))
+    }
+    
+  </script>
 </body>
