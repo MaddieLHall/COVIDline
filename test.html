@@ -18,6 +18,7 @@
     <button type="button" id="test">Test</button>
     <button type="button" id="test">Test</button>
 
+    <div id= "graphbody">
     <script type="text/javascript">
       //Width and height of container
       let w = 800;
@@ -42,7 +43,7 @@
       //loading data
       d3.csv("COVIDco.csv", rowConverter, function (data) {
         dataset = data;
-        // console.table(dataset);
+        console.log(dataset);
 
         //setting scales
         xScale = d3
@@ -86,6 +87,15 @@
             return yScale(d.Death);
           });
 
+        let caseLine = d3
+          .line()
+          .x(function (d) {
+            return xScale(d.Date);
+          })
+          .y(function (d) {
+            return yScale(d.Cases);
+          });
+
         //Create SVG element
         let svg = d3
           .select("body")
@@ -94,22 +104,22 @@
           .attr("height", h);
 
         //Create line
-        //method 1
-        svg.append("path").attr("class", "line").attr("d", line(dataset));
-        //method 2
+        // svg
+        //   .append("path")
+        //   .attr("class", "line")
+        //   .attr("d", line(dataset));
+
         //   svg.append("path")
         // .data([dataset])
         // .attr("class", "line")
         // .attr("d", line);
 
-        //method 3
-        // svg
-        //   .selectAll("path")
-        //   .data([dataset])
-        //   .enter()
-        //   .append("path")
-        //   .attr("class","line")
-        //   .attr("d", line);
+        svg.selectAll("path")
+          .data([dataset])
+          .enter()
+          .append("path")
+          .attr("class","line")
+          .attr("d", line);
 
         //Create axes
         svg
@@ -123,55 +133,53 @@
           .attr("class", "axis")
           .attr("transform", "translate(" + padding + ",0)")
           .call(yAxis);
-      }); // close /dataset
 
-      //on button click (this might all suck and not work)
-      d3.select("button#cases").on("click", function () {
-        // reload dataset
-        d3.csv("COVIDco.csv", rowConverter, function (data) {
-          dataset = data;
-          // console.table(dataset);
 
-          // * redefine scales
-          xScale = d3
-            .scaleTime()
-            .domain([
-              d3.min(dataset, function (d) {
-                return d.Date;
-              }),
-              d3.max(dataset, function (d) {
-                return d.Cases;
-              }),
-            ])
-            .range([padding, w]);
 
-          yScale = d3
-            .scaleLinear()
-            .domain([
-              0,
-              d3.max(dataset, function (d) {
-                return d.Cases;
-              }),
-            ])
-            .range([h - padding, 15]); //15 is so top of axis is not cut off
+        // ON CASES BUTTON CLICK
+        
+          d3.select("button#Cases").on("click", function () {
 
-          //redefine line
-          line = d3
-            .line()
-            .x(function (d) {
-              return xScale(d.Date);
-            })
-            .y(function (d) {
-              return yScale(d.Cases);
-            });
+              svg.selectAll("path")
+              .data([dataset])
+              .transition()
+				    	.duration(1000)
+              .enter()
+              .append("path")
+              .attr("class", "line")
+              .attr("d", caseLine);
 
-          let svg = d3
-            .select("body")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h);
-        });
+					    
+
+
+
+
+          // Select the section we want to apply our changes to
+    // let svg = d3.select("body").transition();
+
+// Make the changes
+//     svg.select(".line")   // change the line
+//         .duration(750)
+//         .attr("d", line(dataset));
+//     svg.select(".x.axis") // change the x axis
+//         .duration(750)
+//         .call(xScale);
+//     svg.select(".y.axis") // change the y axis
+//         .duration(750)
+//         .call(yScale);
+
+// });
+
+
+        }); // close onclick
+
       });
+
+       // close /dataset
+
+       
+
     </script>
+    </div>
   </body>
 </html>
