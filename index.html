@@ -19,9 +19,12 @@
   @import url('https://fonts.googleapis.com/css2?family=Vollkorn&display=swap');
   </style> 
 
-<h1 id="chgtext"> Colorado COVID-19 Cases</h1>
+<h1 id="chgtext"> Colorado COVID-19 Tests Administered</h1>
 <body>
 
+  <button id="tested" onclick= "changeText('Colorado COVID-19 Tests Administered')">
+    Tested
+  </button>
   <button id="cases" onclick= "changeText('Colorado COVID-19 Cases')">
     Cases
   </button>
@@ -33,9 +36,7 @@
     Hospitalizations
   </button>
 
-  <button id="tested" onclick= "changeText('Colorado COVID-19 Tests Administered')">
-    Tested
-  </button>
+  
   <!-- load the d3.js library -->
   <script src="https://d3js.org/d3.v5.min.js"></script>
   
@@ -126,13 +127,13 @@ document.getElementById('chgtext').innerHTML = text;
         .attr('class', 'yAxis');
 
     }).then(() => {
-      IntroVariable("Cases")
+      IntroVariable("Tested")
     })
 
 
     //function to change the data value
     function changeVariable(newValue) {
-      let yMax = d3.max(allData, function (d) { return d[newValue]; });
+      let yMax = d3.max(allData, function (d) { return d.Tested; });
 
       y.domain([0, yMax]);
 
@@ -147,14 +148,12 @@ document.getElementById('chgtext').innerHTML = text;
           .attr("d", valueline)
       
       svg.select('.yAxis')
-        .transition()
-        .duration(1000)
         .call(d3.axisLeft(y))
     }
 
     function IntroVariable(newValue) {
-      let yMax = d3.max(allData, function (d) { return d[newValue]; });
-
+      let yMax = d3.max(allData, function (d) { return d.Tested; });
+      //d[newValue]
       y.domain([0, yMax]);
 
       value = newValue
