@@ -28,12 +28,17 @@
   <button id="cases" onclick= "changeText('Colorado COVID-19 Cases')">
     Cases
   </button>
-
   <button id="deaths" onclick= "changeText('Colorado COVID-19 Deaths')">
     Deaths
   </button>
   <button id="hosp" onclick= "changeText('Colorado COVID-19 Hospitalizations')">
     Hospitalizations
+  </button>
+  <button id="deathZoom" onclick= "changeText('Colorado COVID-19 Deaths')">
+    Deaths (zoomed in)
+  </button>
+  <button id="hospZoom" onclick= "changeText('Colorado COVID-19 Hospitalizations')">
+    Hospitalizations (zoomed in)
   </button>
 
   
@@ -66,6 +71,16 @@ document.getElementById('chgtext').innerHTML = text;
       var casesButton = document.querySelector('#tested'); 
       casesButton.addEventListener('click', function() { 
         changeVariable("Tested")
+      }); 
+
+      var casesButton = document.querySelector('#hospZoom'); 
+      casesButton.addEventListener('click', function() { 
+        varChangeAxisTrans("Hosp")
+      }); 
+
+      var casesButton = document.querySelector('#deathZoom'); 
+      casesButton.addEventListener('click', function() { 
+        varChangeAxisTrans("Deaths")
       }); 
 
     // set the dimensions and margins of the graph
@@ -167,6 +182,28 @@ document.getElementById('chgtext').innerHTML = text;
           .attr("d", valueline)
       
       svg.select('.yAxis')
+        .call(d3.axisLeft(y))
+    }
+
+    //function for the zoomed buttons
+    function varChangeAxisTrans(newValue) {
+      let yMax = d3.max(allData, function (d) { return d[newValue]; });
+      //d[newValue]
+      y.domain([0, yMax]);
+
+      value = newValue
+      
+      svg.selectAll('.covidLine')
+        .data([allData])
+        .join('path')
+          .transition()
+          .duration(1000)
+          .attr("class", "covidLine line")
+          .attr("d", valueline)
+      
+      svg.select('.yAxis')
+        .transition()
+        .duration(1000)
         .call(d3.axisLeft(y))
     }
     
